@@ -69,6 +69,13 @@ server.get('/show_dados_equipamentos', (req, res, next) => {
     }, next)
 });
 
+//Teste Busca todos os dados de equipamentos gravados na tabela de dados de equipamentos
+server.get('/show_dados_equipamentos2', (req, res, next) => {
+    knex('dados_equipamentos').then((dados) => {
+        res.send(dados);
+    }, next)
+});
+
 //Busca todos os equipamentos que possuem dados gravados, retornando o identificador "EQUIPAMENTO"
 server.get('/get_equipamentos', (req, res, next) => {
     knex('dados_equipamentos')
@@ -79,7 +86,7 @@ server.get('/get_equipamentos', (req, res, next) => {
         }, next)
 });
 
-//Busca dados de um equipamento específico passando por parâmetro o identificador "EQUIPAMENTO"
+//Busca dados de um equipamento específico passando por parâmetro o identificador "EQUIPAMENTO" Teste
 server.get('/get_dados_do_equipamento/:equip', (req, res, next) => {
 
     const { equip } = req.params;
