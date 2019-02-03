@@ -19,7 +19,7 @@ server.use(
 var knex = require('knex')({
     client: 'mysql',
     connection: {
-        host: 'semparada-db.c1kvlkss3gfo.us-east-2.rds.amazonaws.com',
+        host: 'semparadadb.c1kvlkss3gfo.us-east-2.rds.amazonaws.com',
         user: 'root',
         password: 'SemPararda48H',
         database: 'semparadadb'
