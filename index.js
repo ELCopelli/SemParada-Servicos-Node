@@ -124,3 +124,19 @@ server.get('/get_ultimo_valor_dado/:equip/:dado', (req, res, next) => {
         }, next)
     return next();
 });
+
+//Busca últimos X valores lidos para o tipo de dado "DADO" para o equipamento "EQUIPAMENTO" Teste
+server.get('/get_n_dados_equipamento/:equip/:dado/:qtde', (req, res, next) => {
+
+    const { equip, dado, qtde } = req.params;
+    knex('dados_equipamentos')
+        .where('equipamento', equip)
+        .where('dado', dado)
+        .limit(qtde)
+        .orderBy('id', 'desc')
+        .then((dados) => {
+            if (!dados) return res.send(new errs.BadDigestError('Dados não encontrados'))
+            res.send(dados);
+        }, next)
+    return next();
+});  
