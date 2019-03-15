@@ -79,12 +79,45 @@ server.get('/get_equipamentos', (req, res, next) => {
         }, next)
 });
 
+//Busca todos os tipos de dados lidos para o equipamento, retornando o identificador "DADO"
+server.get('/get_tipos_dados_equipamento/:equip', (req, res, next) => {
+
+    const { equip } = req.params;
+    knex('dados_equipamentos')
+        .where('equipamento', equip)
+        .distinct('dado')
+        .select()
+        .then((dados) => {
+            if (!dados) return res.send(new errs.BadDigestError('Dados não encontrados'))
+            res.send(dados);
+        }, next)
+    return next();
+});
+
 //Busca dados de um equipamento específico passando por parâmetro o identificador "EQUIPAMENTO" Teste
 server.get('/get_dados_do_equipamento/:equip', (req, res, next) => {
 
     const { equip } = req.params;
     knex('dados_equipamentos')
         .where('equipamento', equip)
+        .then((dados) => {
+            if (!dados) return res.send(new errs.BadDigestError('Dados não encontrados'))
+            res.send(dados);
+        }, next)
+    return next();
+});
+
+//Busca último valor lido para o tipo de dado "DADO" para o equipamento "EQUIPAMENTO" Teste
+server.get('/get_ultimo_valor_dado/:equip/:dado', (req, res, next) => {
+
+    const { equip, dado } = req.params;
+    knex('dados_equipamentos')
+        .where('equipamento', equip)
+        .where('dado', dado)
+        .where('id', knex('dados_equipamentos')
+                        .max('id as id')
+                        .where('equipamento', equip)
+                        .where('dado', dado))
         .then((dados) => {
             if (!dados) return res.send(new errs.BadDigestError('Dados não encontrados'))
             res.send(dados);
