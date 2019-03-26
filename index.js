@@ -144,7 +144,7 @@ server.get('/get_n_dados_equipamento/:equip/:dado/:qtde', (req, res, next) => {
 //Busca últimos 100 leituras para o equipamento e dado/variável no período de tempo informado nos parâmetro
 server.get('/get_dados_equip_by_date/:equip/:dado/:dataInicial/:dataFinal', (req, res, next) => {
 
-    const { equip, dado, dataInicial, dataFinal } = req.params;c    
+    const { equip, dado, dataInicial, dataFinal } = req.params;    
     knex('dados_equipamentos')
         .where('equipamento', equip)
         .where('dado', dado)
