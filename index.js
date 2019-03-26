@@ -140,3 +140,20 @@ server.get('/get_n_dados_equipamento/:equip/:dado/:qtde', (req, res, next) => {
         }, next)
     return next();
 });  
+
+//Busca últimos 100 leituras para o equipamento e dado/variável no período de tempo informado nos parâmetro
+server.get('/get_dados_equip_by_date/:equip/:dado/:dataInicial/:dataFinal', (req, res, next) => {
+
+    const { equip, dado, dataInicial, dataFinal } = req.params;c    
+    knex('dados_equipamentos')
+        .where('equipamento', equip)
+        .where('dado', dado)
+        .whereBetween('data_hora', [dataInicial, dataFinal])
+        .limit(100)
+        .orderBy('id', 'desc')
+        .then((dados) => {
+            if (!dados) return res.send(new errs.BadDigestError('Dados não encontrados'))
+            res.send(dados);
+        }, next)
+    return next();
+});  
