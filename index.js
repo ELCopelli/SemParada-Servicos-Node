@@ -41,6 +41,11 @@ server.listen(8080, function () {
 
 //insere dados de equipamentos
 server.post('/post_dados_equipamentos', (req, res, next) => {
+    //Tratamento para não armazenar dados de GPS sem sinal 
+    if (req.body.resultado === "0.000000#0.000000" && req.body.dado === "GPS") {
+        return res.send(new errs.BadDigestError('Dados de GPS sem sinal. Dados não serão armazenados.'))
+    }
+
     knex('dados_equipamentos')
         .insert(req.body)
         .then((dados) => {
@@ -68,14 +73,14 @@ server.get('/show_dados_equipamentos', (req, res, next) => {
     knex('dados_equipamentos')
         .select(knex.raw('*, (DATE_FORMAT(data_hora, "%d/%m/%Y %H:%i:%s"))  data_hora_formatada'))
         .then((dados) => {
-        res.send(dados);
-    }, next)
+            res.send(dados);
+        }, next)
 });
 
 //Busca todos os equipamentos que possuem dados gravados, retornando o identificador "EQUIPAMENTO"
 server.get('/get_equipamentos', (req, res, next) => {
     knex('dados_equipamentos')
-        .distinct('equipamento')        
+        .distinct('equipamento')
         .then((dados) => {
             res.send(dados);
         }, next)
@@ -119,9 +124,9 @@ server.get('/get_ultimo_valor_dado/:equip/:dado', (req, res, next) => {
         .where('equipamento', equip)
         .where('dado', dado)
         .where('id', knex('dados_equipamentos')
-                        .max('id as id')
-                        .where('equipamento', equip)
-                        .where('dado', dado))
+            .max('id as id')
+            .where('equipamento', equip)
+            .where('dado', dado))
         .then((dados) => {
             if (!dados) return res.send(new errs.BadDigestError('Dados não encontrados'))
             res.send(dados);
@@ -144,12 +149,12 @@ server.get('/get_n_dados_equipamento/:equip/:dado/:qtde', (req, res, next) => {
             res.send(dados);
         }, next)
     return next();
-});  
+});
 
 //Busca últimos 100 leituras para o equipamento e dado/variável no período de tempo informado nos parâmetro
 server.get('/get_dados_equip_by_date/:equip/:dado/:dataInicial/:dataFinal', (req, res, next) => {
 
-    const { equip, dado, dataInicial, dataFinal } = req.params;    
+    const { equip, dado, dataInicial, dataFinal } = req.params;
     knex('dados_equipamentos')
         .select(knex.raw('*, (DATE_FORMAT(data_hora, "%d/%m/%Y %H:%i:%s"))  data_hora_formatada'))
         .where('equipamento', equip)
