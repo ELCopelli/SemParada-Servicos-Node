@@ -168,3 +168,19 @@ server.get('/get_dados_equip_by_date/:equip/:dado/:dataInicial/:dataFinal', (req
         }, next)
     return next();
 });  
+
+//Busca maior, menor e media periodo
+server.get('/get_dados_equip_by_date_estatisticas/:equip/:dado/:dataInicial/:dataFinal', (req, res, next) => {
+
+    const { equip, dado, dataInicial, dataFinal } = req.params;
+    knex('dados_equipamentos')
+        .select(knex.raw('MAX(resultado) maximo, MIN(resultado) minimo, AVG(resultado) media'))
+        .where('equipamento', equip)
+        .where('dado', dado)
+        .whereBetween('data_hora', [dataInicial, dataFinal])                
+        .then((dados) => {
+            if (!dados) return res.send(new errs.BadDigestError('Dados não encontrados'))
+            res.send(dados);
+        }, next)
+    return next();
+});  
